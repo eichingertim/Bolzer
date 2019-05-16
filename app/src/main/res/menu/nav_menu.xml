@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Profil">
+        <menu>
+            <item android:id="@+id/nav_proile"
+                android:title="Profil"
+                android:icon="@drawable/ic_person_black_24dp"
+                app:showAsAction="withText"/>
+            <item android:id="@+id/nav_logout"
+                android:title="Ausloggen"
+                android:icon="@drawable/ic_power_settings_new_black_24dp"
+                app:showAsAction="withText"/>
+        </menu>
+    </item>
+
+    <item android:title="Einstellungen">
+        <menu>
+            <item android:id="@+id/nav_einstellungen"
+                android:title="Einstellungen"
+                android:icon="@drawable/ic_settings_black_24dp"
+                app:showAsAction="withText"/>
+        </menu>
+    </item>
+
+    <item android:title="Hilfe">
+        <menu>
+            <item android:id="@+id/nav_ueber"
+                android:title="Über Bolzer"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                app:showAsAction="withText"/>
+            <item android:id="@+id/nav_hilfe"
+                android:title="Hilfe"
+                android:icon="@drawable/ic_help_outline_black_24dp"
+                app:showAsAction="withText"/>
+        </menu>
+    </item>
+
+</menu>

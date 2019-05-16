@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Bolzer</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="api_key">pk.eyJ1IjoidGltZWljaGluZ2VyIiwiYSI6ImNqdTcwcHQwbzFwY2c0NHNhODY4NjF1dDgifQ.zaQW1B6NLSRxwV7wHkqq1w</string>
+
+    <!--Strings for New Bolzer Activity-->
+    <string name="select_an_address_location">Wähle eine Adresse/Location aus!</string>
+    <string name="age_data_to_string">%s - %s Jahre</string>
+    <string name="new_bolzer_published">Neuer Bolzer wurde veröffentlicht</string>
+    <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
+    <string name="fill_all_fields">Du musst alle Felder ausfüllen.</string>
+    <string name="plz_coordinates_not_match">Postleitzahl und Koordinaten stimmen nicht überein</string>
+    <string name="no_data_recieved">Keine Daten empfangen</string>
+
+    <!--String for Map-Fragment-->
+    <string name="unable_get_zipcode">Postleitzahl kann nicht abgerufen werden</string>
+
+    <string-array name="age_numbers">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+    </string-array>
+
+</resources>

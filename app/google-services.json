@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "321499667632",
+    "firebase_url": "https://bolzer-5bc31.firebaseio.com",
+    "project_id": "bolzer-5bc31",
+    "storage_bucket": "bolzer-5bc31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321499667632:android:22ae2bbdca961a33",
+        "android_client_info": {
+          "package_name": "com.teapps.bolzer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321499667632-r0ubdvulqmrarg0vrtoqt4ace9lnjov3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teapps.bolzer",
+            "certificate_hash": "e0ad5419d8d8e983cfa27b1538f0e09a9c5dd2b9"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvJAtiBruOz2ZRy2ecwnFToIi_r0xuh54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321499667632-1ukcdq7lqn1lsonk7d82hcu8teato8tg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
