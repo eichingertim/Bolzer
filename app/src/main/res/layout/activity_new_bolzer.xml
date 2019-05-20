@@ -16,169 +16,136 @@
             android:layout_height="match_parent"
             android:padding="18dp">
 
-            <EditText
-                android:id="@+id/title"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/titleLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:hint="z.B. Bolzer beim FC-Platz"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-            <EditText
-                android:id="@+id/country"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/name"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:hint="Land"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title" />
-
-            <EditText
-                android:id="@+id/city"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/country"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:hint="Ort"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/postalcode"
-                app:layout_constraintTop_toBottomOf="@+id/country" />
-
-            <EditText
-                android:id="@+id/postalcode"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:ems="10"
-                android:hint="PLZ"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/country" />
-
-            <EditText
-                android:id="@+id/location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/postalcode"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:hint="Adresse"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintEnd_toStartOf="@+id/imageView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/postalcode" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_margin="10dp"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                app:layout_constraintBottom_toBottomOf="@+id/location"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/location"
-                app:srcCompat="@drawable/ic_map_black_24dp" />
-
-            <EditText
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:hint="Max Mustermann"
-                android:inputType="textPersonName"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-            <Button
-                android:id="@+id/btnSaveNewB"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/button_standard_design"
-                android:elevation="10dp"
-                android:text="Veröffentlichen"
-                android:translationZ="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spAgeGroupTo" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:paddingLeft="5dp"
-                android:text="Titel des Bolzers"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondaryTextColor"
+                    android:hint="Bolzer Titel"
+                    android:textSize="24dp" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/country_Layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:paddingLeft="5dp"
-                android:text="Dein Name"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnDate" />
+                app:layout_constraintTop_toBottomOf="@+id/pickAdress">
 
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Land"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textSize="18dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/city_Layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:paddingLeft="5dp"
-                android:text="Datum"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/location" />
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/postalcode_Layout"
+                app:layout_constraintTop_toBottomOf="@+id/country_Layout">
 
-            <TextView
-                android:id="@+id/Uhrzeit"
-                android:layout_width="wrap_content"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/secondaryTextColor"
+                    android:hint="Ort"
+                    android:textSize="18dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/postalcode_Layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:paddingLeft="5dp"
-                android:text="Uhrzeit"
-                app:layout_constraintStart_toStartOf="@+id/btnTime"
-                app:layout_constraintTop_toBottomOf="@+id/location" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/country_Layout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/postalcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondaryTextColor"
+                    android:inputType="textPersonName"
+                    android:hint="PLZ"
+                    android:textSize="18dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/location_Layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/postalcode_Layout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Koordinaten"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textSize="18dp" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/name_Layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTime">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/secondaryTextColor"
+                    android:hint="Name"
+                    android:textSize="18dp" />
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:id="@+id/textView3"
@@ -187,9 +154,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:paddingLeft="5dp"
-                android:text="Altersgruppe von"
+                android:text="Alter von"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
+                app:layout_constraintTop_toBottomOf="@+id/name_Layout" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -197,9 +164,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingLeft="5dp"
-                android:text="Altersgruppe bis"
+                android:text="Alter bis"
                 app:layout_constraintStart_toStartOf="@+id/spAgeGroupTo"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
+                app:layout_constraintTop_toBottomOf="@+id/name_Layout" />
 
             <Spinner
                 android:id="@+id/spAgeGroupFrom"
@@ -234,36 +201,52 @@
 
             <Button
                 android:id="@+id/btnDate"
-                style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="177dp"
-                android:layout_height="47dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="5dp"
-                android:text="02.05.2019"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/button_outline"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:text="Datum"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/darkTextColor"
-                android:textSize="18sp"
+                android:textSize="18dp"
+                android:typeface="normal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView7" />
+                app:layout_constraintTop_toBottomOf="@+id/location_Layout" />
 
             <Button
                 android:id="@+id/btnTime"
-                style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="5dp"
-                android:text="14.50"
+                android:background="@drawable/button_outline"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:text="Uhrzeit"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/darkTextColor"
-                android:textSize="18sp"
+                android:textSize="18dp"
+                android:typeface="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btnDate"
-                app:layout_constraintTop_toBottomOf="@+id/Uhrzeit" />
+                app:layout_constraintTop_toBottomOf="@+id/location_Layout" />
+
+            <Button
+                android:id="@+id/pickAdress"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button_standard_design"
+                android:text="Adresse wählen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleLayout" />
 
 
         </android.support.constraint.ConstraintLayout>

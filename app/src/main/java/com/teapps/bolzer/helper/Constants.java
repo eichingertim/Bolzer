@@ -31,6 +31,9 @@ public class Constants {
     //Constants for Background Service
     public static final int INTERVALL = 1000*60;
 
+    //Constants for Statistics ans Points
+
+
 
 
 }

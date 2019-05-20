@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
@@ -45,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.teapps.bolzer.helper.Constants.COLLECTION_LOCATIONS;
+import static com.teapps.bolzer.helper.Constants.COLLECTION_USERS;
+import static com.teapps.bolzer.helper.Constants.KEY_CREATOR_NAME_AND_EMAIL;
+import static com.teapps.bolzer.helper.Constants.KEY_MEMBERS_ID;
 
 public class QRCodeScanActivtiy extends AppCompatActivity {
 
@@ -129,7 +133,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                             String rawValue = barcode.getRawValue();
 
                             drawRectangleToQRCode(rotatedImg, corners);
-                            showConfirmDialog(rawValue, camera);
+                            checkValidationOfQRCode(rawValue, camera);
                             progressDialog.dismiss();
                         }
 
@@ -157,6 +161,14 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
         camera.startPreview();
     }
 
+    private void noValidQRCode(Camera camera) {
+        progressDialog.dismiss();
+        imageView.setVisibility(View.INVISIBLE);
+        preview.setVisibility(View.VISIBLE);
+        button.setVisibility(View.VISIBLE);
+        camera.startPreview();
+    }
+
     private void drawRectangleToQRCode(Bitmap rotatedImg, Point[] corners) {
         Canvas c = new Canvas(rotatedImg);
         Paint paint = new Paint();
@@ -168,8 +180,37 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
         imageView.setImageBitmap(rotatedImg);
     }
 
-    //TODO: Confirmation Bolzer membership
-    private void showConfirmDialog(String rawValue, final Camera camera) {
+    private void checkValidationOfQRCode(final String rawValue, final Camera camera) {
+        try {
+            String bolzer_id = rawValue.split("#")[0];
+            database.collection(COLLECTION_LOCATIONS).document(bolzer_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    try {
+                        String creator_id = documentSnapshot.getString(KEY_CREATOR_NAME_AND_EMAIL).split("#")[2];
+                        if (creator_id.equals(firebaseAuth.getCurrentUser().getUid())) {
+                            showConfirmationDialog(rawValue, camera);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Du bist nicht berechtigt " +
+                                    "diesen QR-Code zu scannen", Toast.LENGTH_SHORT).show();
+                            noValidQRCode(camera);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Kein gültiger QR-Code", Toast.LENGTH_SHORT).show();
+                        noValidQRCode(camera);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Kein gültiger QR-Code", Toast.LENGTH_SHORT).show();
+            noValidQRCode(camera);
+        }
+    }
+
+    private void showConfirmationDialog(String rawValue, final Camera camera) {
         AlertDialog.Builder builder = new AlertDialog.Builder(QRCodeScanActivtiy.this, R.style.DialogTheme);
         builder.setTitle("Teilnahme bestätigen?");
         final String[] values = rawValue.split("#");

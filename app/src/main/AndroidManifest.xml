@@ -20,7 +20,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".QRCodeScanActivtiy"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ProfileAcivity"
+        <activity android:name=".nav_activities.ProfileAcivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".logreg.LogRegActivity"

@@ -133,6 +133,9 @@ public class RegisterFragment extends Fragment {
         map.put("email", email);
         map.put("id", user.getUid());
         map.put("standard_points", 0);
+        map.put("bolzers_created", 0);
+        map.put("bolzers_scanned_as_creator", 0);
+        map.put("bolzers_completed_as_member", 0);
         database.collection("users").document(user.getUid()).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

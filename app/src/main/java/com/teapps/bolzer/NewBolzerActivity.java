@@ -3,9 +3,11 @@ package com.teapps.bolzer;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -23,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -69,13 +70,14 @@ public class NewBolzerActivity extends AppCompatActivity {
 
     private EditText title, country, city, postalcode, location, name;
     private Spinner ageFrom, ageTo;
-    private ImageView imgPickLocation;
+    private Button btnPickLocation;
 
-    private Button btnSave, btnTime, btnDate;
+    private Button btnTime, btnDate;
 
     private StorageReference mStorageRef;
 
     private Calendar alarmCalender = Calendar.getInstance();
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -90,14 +92,6 @@ public class NewBolzerActivity extends AppCompatActivity {
         initializeActionBar();
         initializeObjects();
         fillKnownObjects();
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                publishNewBolzer();
-            }
-        });
-
-
     }
 
     /**
@@ -109,7 +103,8 @@ public class NewBolzerActivity extends AppCompatActivity {
 
         String bolzerLocationStr = location.getText().toString();
         String[] bolzerLocation = bolzerLocationStr.split(", ");
-        String bolzerCreatorNameAndEmail = firebaseUser.getEmail() + "#" + name.getText().toString();
+        String bolzerCreatorNameAndEmail = firebaseUser.getEmail() + "#"
+                + name.getText().toString() + "#" + firebaseUser.getUid();
         String strAgeGroup = String.format(getString(R.string.age_data_to_string)
                 , ageFrom.getSelectedItem().toString(), ageTo.getSelectedItem().toString());
         String randomId = randomID();
@@ -152,6 +147,12 @@ public class NewBolzerActivity extends AppCompatActivity {
         if (isValidInput(map.get(KEY_TITLE).toString(), map.get(KEY_COUNTRY).toString()
                 , map.get(KEY_CITY).toString(), map.get(KEY_POSTALCODE).toString(), bolzerLocationStr)) {
 
+            progressDialog = new ProgressDialog(NewBolzerActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("wird veröffentlicht....");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             MapSnapshotter.Options snapShotOptions = new MapSnapshotter
                     .Options(500, 350);
             CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -192,6 +193,7 @@ public class NewBolzerActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     uploadToFirebase(task, map, randomId);
                 } else {
+                    progressDialog.dismiss();
                     Toast.makeText(getApplicationContext()
                             , getString(R.string.error_occurred)
                             , Toast.LENGTH_SHORT).show();
@@ -220,6 +222,7 @@ public class NewBolzerActivity extends AppCompatActivity {
                                         , getString(R.string.new_bolzer_published)
                                         , Toast.LENGTH_SHORT).show();
                                 setAlarm(map);
+                                progressDialog.dismiss();
                                 onBackPressed();
                             }
                         });
@@ -305,6 +308,7 @@ public class NewBolzerActivity extends AppCompatActivity {
                         alarmCalender.set(Calendar.YEAR, year);
                         alarmCalender.set(Calendar.MONTH, monthOfYear);
                         alarmCalender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        btnDate.setTextColor(Color.parseColor("#000000"));
                         btnDate.setText(date);
 
                     }
@@ -335,9 +339,10 @@ public class NewBolzerActivity extends AppCompatActivity {
                         alarmCalender.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         alarmCalender.set(Calendar.MINUTE, minute);
                         String time = hour+"."+min;
+                        btnTime.setTextColor(Color.parseColor("#000000"));
                         btnTime.setText(time);
                     }
-                }, mHour, mMinute, false);
+                }, mHour, mMinute, true);
         timePickerDialog.show();
     }
 
@@ -388,10 +393,8 @@ public class NewBolzerActivity extends AppCompatActivity {
         city.setEnabled(false);
         postalcode.setEnabled(false);
 
-        btnSave = findViewById(R.id.btnSaveNewB);
-
-        imgPickLocation = findViewById(R.id.imageView);
-        imgPickLocation.setOnClickListener(new View.OnClickListener() {
+        btnPickLocation = findViewById(R.id.pickAdress);
+        btnPickLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickLocation();
@@ -425,6 +428,7 @@ public class NewBolzerActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_new_bolzer, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -432,6 +436,9 @@ public class NewBolzerActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.action_publish_bolzer:
+                publishNewBolzer();
                 break;
         }
         return super.onOptionsItemSelected(item);

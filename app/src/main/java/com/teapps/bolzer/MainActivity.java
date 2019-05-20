@@ -33,6 +33,7 @@ import com.teapps.bolzer.fragments.MyBolzersFragment;
 import com.teapps.bolzer.fragments.BolzerTicketsFragment;
 import com.teapps.bolzer.fragments.StatisticFragment;
 import com.teapps.bolzer.logreg.LogRegActivity;
+import com.teapps.bolzer.nav_activities.ProfileAcivity;
 
 import java.util.Calendar;
 
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_proile:
+                startActivity(new Intent(MainActivity.this, ProfileAcivity.class));
                 return true;
 
             case R.id.nav_logout:
@@ -175,5 +177,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Permission has already been granted
         }
     }
-
 }

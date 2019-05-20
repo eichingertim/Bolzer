@@ -107,7 +107,7 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String nameValue = auth.getCurrentUser().getEmail()+"#"+documentSnapshot
-                        .getString(KEY_FULLNAME);
+                        .getString(KEY_FULLNAME)+"#"+auth.getCurrentUser().getUid();
                         database.collection(COLLECTION_LOCATIONS).whereEqualTo(KEY_CREATOR_NAME_AND_EMAIL, nameValue)
                                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
