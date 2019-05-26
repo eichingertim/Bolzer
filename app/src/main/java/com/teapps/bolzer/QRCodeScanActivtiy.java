@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
@@ -227,6 +228,19 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+
+                                Map<String, Object> mapCreator = new HashMap<>();
+                                mapCreator.put("standard_points", FieldValue.increment(5));
+                                mapCreator.put("bolzers_scanned_as_creator", FieldValue.increment(1));
+
+                                Map<String, Object> mapMember = new HashMap<>();
+                                mapMember.put("standard_points", FieldValue.increment(5));
+                                mapMember.put("bolzers_completed_as_member", FieldValue.increment(1));
+
+                                database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+                                        .update(mapCreator);
+                                database.collection(COLLECTION_USERS).document(values[1])
+                                        .update(mapMember);
                                 dialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "Bestätigt", Toast.LENGTH_SHORT).show();
                                 onBackPressed();

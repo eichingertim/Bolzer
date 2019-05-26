@@ -1,32 +1,23 @@
 package com.teapps.bolzer.helper;
 
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.WriterException;
 import com.squareup.picasso.Picasso;
@@ -37,22 +28,12 @@ import java.util.Calendar;
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
 
-import static com.teapps.bolzer.helper.Constants.COLLECTION_LOCATIONS;
-import static com.teapps.bolzer.helper.Constants.KEY_CITY;
-import static com.teapps.bolzer.helper.Constants.KEY_DATE;
-import static com.teapps.bolzer.helper.Constants.KEY_ID;
-import static com.teapps.bolzer.helper.Constants.KEY_POSTALCODE;
-import static com.teapps.bolzer.helper.Constants.KEY_TIME;
-import static com.teapps.bolzer.helper.Constants.KEY_TITLE;
-
 public class BolzerDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private CallBack callBack;
-    private String title, address,  members, ageGroup, creatorName, userFullName, id, datetime;
+    private String userFullName;
     private ImageView imgMap;
     private TextView tvTitle, tvAddress, tvMembers, tvAgegroup, btnAccept, tvDateAndTime;
-    private String latiLongi;
-    private String downloadURL = "";
 
     private ScrollView scrollView;
 
@@ -63,6 +44,8 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
     ListView listView;
     ArrayAdapter<String> arrayAdapter;
 
+    BolzerCardItem bolzerCardItem;
+
     FirebaseAuth auth;
     FirebaseFirestore db;
 
@@ -70,20 +53,10 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
         return new BolzerDialogFragment();
     }
 
-    public void setStrings(String downloadURL, String title, String address, String members
-            , String ageGroup, String creatorName, String userFullName, String id, String datetime
-            , String latiLongi, boolean isTicketView) {
-        this.downloadURL = downloadURL;
-        this.title = title;
-        this.address = address;
-        this.members = members;
-        this.ageGroup = ageGroup;
-        this.creatorName = creatorName;
-        this.userFullName = userFullName;
-        this.id = id;
-        this.datetime = datetime;
-        this.latiLongi = latiLongi;
+    public void setArguments(BolzerCardItem bolzerCardItem, boolean isTicketView, String userFullName) {
+        this.bolzerCardItem = bolzerCardItem;
         this.isTicketView = isTicketView;
+        this.userFullName = userFullName;
     }
 
     public void setCallBack(CallBack callBack) {
@@ -132,16 +105,16 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
         tvDateAndTime = view.findViewById(R.id.tvDateTime);
         btnTicket = view.findViewById(R.id.btnShowTicket);
 
-        tvTitle.setText(title);
-        tvMembers.setText(members);
-        tvAddress.setText(address);
-        tvAgegroup.setText(ageGroup);
-        tvDateAndTime.setText(datetime);
+        tvTitle.setText(bolzerCardItem.getTitle());
+        tvMembers.setText(bolzerCardItem.getMembers());
+        tvAddress.setText(bolzerCardItem.getAddress());
+        tvAgegroup.setText(bolzerCardItem.getAgeGroup());
+        tvDateAndTime.setText("Am " + bolzerCardItem.getDate() + " um " + bolzerCardItem.getTime());
 
         ImageButton btnClose = view.findViewById(R.id.btnDialogClose);
         btnAccept = view.findViewById(R.id.btnDialogAccept);
 
-        Picasso.get().load(downloadURL).into(imgMap);
+        Picasso.get().load(bolzerCardItem.getMapURL()).into(imgMap);
 
         if (isTicketView) {
             btnAccept.setVisibility(View.INVISIBLE);
@@ -153,7 +126,7 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
         btnAccept.setOnClickListener(this);
 
         arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_row_members, R.id.list_row_text
-                , members.split(","));
+                , bolzerCardItem.getMembers().split(","));
         listView =  view.findViewById(R.id.listViewMembers);
         listView.setAdapter(arrayAdapter);
 
@@ -167,17 +140,20 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
                 dismiss();
                 break;
             case R.id.btnDialogAccept:
-                callBack.onActionClicked(id);
+                callBack.onActionClicked(bolzerCardItem.getID());
                 dismiss();
                 break;
             case R.id.imgMap:
                 Uri gmmIntentUri = Uri.parse("google.navigation:q="
-                        + latiLongi.split("#")[0]+","+latiLongi.split("#")[1]);
+                        + bolzerCardItem.getLocation().split("#")[0]+","
+                        +bolzerCardItem.getLocation().split("#")[1]);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
+                break;
             case R.id.btnShowTicket:
                 showTicket();
+                break;
         }
     }
 
@@ -203,29 +179,20 @@ public class BolzerDialogFragment extends DialogFragment implements View.OnClick
     }
 
     private void fillDataToDialogFields(final TextView tvTitle, final TextView tvID, final TextView tvAddress, final TextView tvTime, final TextView tvDate, final ImageView imgQrCode) {
-        db.collection(COLLECTION_LOCATIONS).document(id).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot ds = task.getResult();
-                        tvTitle.setText(ds.getString(KEY_TITLE));
-                        tvID.setText(ds.getString(KEY_ID));
-                        tvAddress.setText(ds.getString(KEY_POSTALCODE) + " "
-                                + ds.getString(KEY_CITY));
-                        tvTime.setText(ds.getString(KEY_TIME));
-                        tvDate.setText(ds.getString(KEY_DATE));
+        tvTitle.setText(bolzerCardItem.getTitle());
+        tvID.setText(bolzerCardItem.getID());
+        tvAddress.setText(bolzerCardItem.getAddress());
+        tvTime.setText(bolzerCardItem.getTime());
+        tvDate.setText(bolzerCardItem.getDate());
 
-                        String qrString = ds.getString(KEY_ID) + "#" + auth.getCurrentUser().getUid();
+        String qrString = bolzerCardItem.getID() + "#" + auth.getCurrentUser().getUid();
 
-                        QRGEncoder qrgEncoder = new QRGEncoder(qrString, null, QRGContents.Type.TEXT, 450);
-                        try {
-                            imgQrCode.setImageBitmap(qrgEncoder.encodeAsBitmap());
-                        } catch (WriterException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+        QRGEncoder qrgEncoder = new QRGEncoder(qrString, null, QRGContents.Type.TEXT, 450);
+        try {
+            imgQrCode.setImageBitmap(qrgEncoder.encodeAsBitmap());
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
     }
 
     public interface CallBack {

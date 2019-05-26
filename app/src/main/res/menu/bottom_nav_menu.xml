@@ -8,7 +8,7 @@
         android:icon="@drawable/ic_star_green_24dp" />
     <item android:id="@+id/action_other_bolzer"
         android:title="Bolzer Tickets"
-        android:icon="@drawable/ic_playlist_add_check_black_24dp" />
+        android:icon="@drawable/ic_action_ticket" />
     <item android:id="@+id/action_statistics"
         android:title="Statistik"
         android:icon="@drawable/ic_assessment_black_24dp" />

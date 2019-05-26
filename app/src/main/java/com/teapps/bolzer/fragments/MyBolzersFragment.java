@@ -143,32 +143,25 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
         });
     }
 
-    private void getDataAndOpenDialog(final DocumentSnapshot ds) {
-        final String title = ds.getString(KEY_TITLE);
-        final String members = ds.getString(KEY_MEMBERS);
-        final String address = ds.getString(KEY_POSTALCODE)
-                + " " + ds.getString(KEY_CITY);
-        final String ageGroup = ds.getString(KEY_AGE_GROUP);
-        final String creatorName = ds.getString(KEY_CREATOR_NAME_AND_EMAIL).split("#")[1];
-        final String id = ds.getId();
-        final String datetime = "Am " + ds.getString("date") + " um "
-                + ds.getString("time") + " Uhr";
-        final String downloadURL = ds.getString(KEY_DOWNLOAD_URL);
-        final String latiLongi = ds.getGeoPoint("location").getLatitude() + "#"
-                + ds.getGeoPoint("location").getLongitude();
+    private void getDataAndOpenDialog(final DocumentSnapshot doc) {
+        final String latiLongi = doc.getGeoPoint("location").getLatitude() + "#"
+                + doc.getGeoPoint("location").getLongitude();
 
         database.collection(COLLECTION_USERS).document(auth.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot doc = task.getResult();
+                DocumentSnapshot ds = task.getResult();
 
-                String userFullName = doc.getString(KEY_FULLNAME);
+                String userFullName = ds.getString(KEY_FULLNAME);
+                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(KEY_DOWNLOAD_URL)
+                        , doc.getString(KEY_TITLE), doc.getString(KEY_POSTALCODE)
+                        + " " + doc.getString(KEY_CITY), doc.getId(), doc.getString(KEY_CREATOR_NAME_AND_EMAIL)
+                        , doc.getString("date"), doc.getString("time"), doc.getString(KEY_MEMBERS)
+                        , doc.getString(KEY_AGE_GROUP), latiLongi);
 
                 BolzerDialogFragment fragment = BolzerDialogFragment.newInstance();
-                fragment.setStrings(downloadURL, title, address
-                        , members, ageGroup, creatorName, userFullName, id, datetime
-                        , latiLongi, false);
+                fragment.setArguments(bolzerCardItem, false, userFullName);
                 fragment.show(getActivity().getSupportFragmentManager(), "tag");
             }
         });

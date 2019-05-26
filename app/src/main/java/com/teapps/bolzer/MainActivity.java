@@ -2,9 +2,8 @@ package com.teapps.bolzer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -20,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -34,10 +34,6 @@ import com.teapps.bolzer.fragments.BolzerTicketsFragment;
 import com.teapps.bolzer.fragments.StatisticFragment;
 import com.teapps.bolzer.logreg.LogRegActivity;
 import com.teapps.bolzer.nav_activities.ProfileAcivity;
-
-import java.util.Calendar;
-
-import static com.teapps.bolzer.helper.Constants.INTERVALL;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -120,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(MainActivity.this, LogRegActivity.class));
                 return true;
 
+            case R.id.nav_ueber:
+                openAboutDialog();
+                return true;
+
             case R.id.action_map:
                 fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
@@ -151,8 +151,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+    private void openAboutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setView(R.layout.dialog_about_bolzer);
+        builder.setPositiveButton("Schliessen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        Dialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void initializeFab() {
-        fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.btn_profile_edit);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 , Manifest.permission.RECEIVE_BOOT_COMPLETED}
                                 , 1240);
         } else {
-            // Permission has already been granted
         }
     }
 }

@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
@@ -222,6 +223,8 @@ public class NewBolzerActivity extends AppCompatActivity {
                                         , getString(R.string.new_bolzer_published)
                                         , Toast.LENGTH_SHORT).show();
                                 setAlarm(map);
+                                database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+                                        .update("bolzers_created", FieldValue.increment(1));
                                 progressDialog.dismiss();
                                 onBackPressed();
                             }

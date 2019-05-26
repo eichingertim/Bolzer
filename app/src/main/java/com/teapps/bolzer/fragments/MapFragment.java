@@ -2,6 +2,8 @@ package com.teapps.bolzer.fragments;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -46,6 +48,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.teapps.bolzer.R;
+import com.teapps.bolzer.helper.BolzerCardItem;
 import com.teapps.bolzer.helper.BolzerDialogFragment;
 import com.teapps.bolzer.services.AlarmReceiver;
 
@@ -88,7 +91,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private FirebaseAuth firebaseAuth;
     private Bundle savedInstanceState;
 
-    private Calendar alarmCalender;
+    private Calendar alarmCalender = Calendar.getInstance();
+
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -139,7 +144,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         map = mapboxMap;
-        map.setStyle(Style.OUTDOORS, new Style.OnStyleLoaded() {
+        map.setStyle(new Style.Builder().fromUrl("mapbox://styles/timeichinger/cjw0cu8yv22nl1cv38yj4hb41")
+                , new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationPlugin(style);
@@ -175,6 +181,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (DocumentSnapshot doc : task.getResult()) {
                     if (doc.getGeoPoint(KEY_LOCATION).equals(geoPoint)) {
+                        progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setMessage("Loading....");
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.show();
                         getDataAndSendToDialog(doc, marker);
                         break;
                     }
@@ -184,17 +194,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return true;
     }
 
-    private void getDataAndSendToDialog(DocumentSnapshot doc, final Marker marker) {
-        final String title = doc.getString(KEY_TITLE);
-        final String members = doc.getString(KEY_MEMBERS);
-        final String address = doc.getString(KEY_POSTALCODE)
-                + " " + doc.getString(KEY_CITY);
-        final String ageGroup = doc.getString(KEY_AGE_GROUP);
-        final String creatorName = doc.getString(KEY_CREATOR_NAME_AND_EMAIL).split("#")[1];
-        final String id = doc.getId();
-        final String datetime = "Am " + doc.getString("date") + " um "
-                + doc.getString("time") + " Uhr";
-        final String downloadURL = doc.getString(KEY_DOWNLOAD_URL);
+    private void getDataAndSendToDialog(final DocumentSnapshot doc, final Marker marker) {
         database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -203,12 +203,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 String latiLongi = marker.getPosition().getLatitude() + "#"
                         + marker.getPosition().getLongitude();
                 String userFullName = ds.getString(KEY_FULLNAME);
-                DialogFragment fragment = BolzerDialogFragment.newInstance();
-                ((BolzerDialogFragment) fragment).setStrings(downloadURL, title, address
-                        , members, ageGroup, creatorName, userFullName, id, datetime
-                        , latiLongi, false);
-                ((BolzerDialogFragment) fragment).setCallBack(MapFragment.this);
+
+                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(KEY_DOWNLOAD_URL)
+                        , doc.getString(KEY_TITLE), doc.getString(KEY_POSTALCODE)
+                        + " " + doc.getString(KEY_CITY), doc.getId(), doc.getString(KEY_CREATOR_NAME_AND_EMAIL)
+                        , doc.getString("date"), doc.getString("time"), doc.getString(KEY_MEMBERS)
+                        , doc.getString(KEY_AGE_GROUP), latiLongi);
+
+                BolzerDialogFragment fragment = BolzerDialogFragment.newInstance();
+                fragment.setArguments(bolzerCardItem, false, userFullName);
+                fragment.setCallBack(MapFragment.this);
                 fragment.show(getActivity().getSupportFragmentManager(), "tag");
+                progressDialog.dismiss();
             }
         });
     }
