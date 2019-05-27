@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Fragment mapFragment = new MapFragment();
     private Fragment myBolzersFragment = new MyBolzersFragment();
     private Fragment otherBolzersFragment = new BolzerTicketsFragment();
-    private Fragment statisticFragment = new StatisticFragment();
     private FragmentManager fm = getSupportFragmentManager();
     private Fragment active = mapFragment;
 
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initFragments() {
-        fm.beginTransaction().add(R.id.main_container, statisticFragment, "4").hide(statisticFragment).commit();
         fm.beginTransaction().add(R.id.main_container, otherBolzersFragment, "3").hide(otherBolzersFragment).commit();
         fm.beginTransaction().add(R.id.main_container, myBolzersFragment, "2").hide(myBolzersFragment).commit();
         fm.beginTransaction().add(R.id.main_container, mapFragment, "1").commit();
@@ -138,13 +136,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fm.beginTransaction().hide(active).show(otherBolzersFragment).commit();
                 active = otherBolzersFragment;
                 actionBar.setTitle("Bolzer Tickets");
-                fab.setVisibility(View.INVISIBLE);
-                return true;
-
-            case R.id.action_statistics:
-                fm.beginTransaction().hide(active).show(statisticFragment).commit();
-                active = statisticFragment;
-                actionBar.setTitle("Punkte");
                 fab.setVisibility(View.INVISIBLE);
                 return true;
         }

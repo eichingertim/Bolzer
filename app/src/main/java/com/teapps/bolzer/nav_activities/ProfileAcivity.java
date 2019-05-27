@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +34,7 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
     private TextView tvForeName, tvLastName, tvEmail, tvPassword;
     private ImageView imgProfilePic;
     private ImageButton btnBack, btnEdit;
-    private Button btn_standard_points;
+    private Button btn_standard_points, btnBolzerCreatedPoints, btnBolzerTicketPoints;
 
     private FirebaseFirestore database;
     private FirebaseAuth auth;
@@ -73,6 +74,8 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
         tvPassword.setText("...............");
 
         btn_standard_points.setText(String.valueOf(ds.getLong("standard_points")));
+        btnBolzerCreatedPoints.setText(String.valueOf(ds.getLong("bolzers_created")));
+        btnBolzerTicketPoints.setText(String.valueOf(ds.getLong("bolzers_completed_as_member")));
     }
 
     private void initFirebase() {
@@ -90,10 +93,15 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
         btnBack = findViewById(R.id.btn_profile_back);
         btnEdit = findViewById(R.id.btn_profile_edit);
         btn_standard_points = findViewById(R.id.btn_standard_points);
+        btnBolzerCreatedPoints = findViewById(R.id.btn_bolzer_created);
+        btnBolzerTicketPoints = findViewById(R.id.btn_bolzer_tickets);
 
         btnEdit.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         imgProfilePic.setOnClickListener(this);
+        btn_standard_points.setOnClickListener(this);
+        btnBolzerTicketPoints.setOnClickListener(this);
+        btnBolzerCreatedPoints.setOnClickListener(this);
 
     }
 
@@ -112,6 +120,15 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.img_profile_picture:
                 setNewProfilePicture();
+                break;
+            case R.id.btn_standard_points:
+                Toast.makeText(getApplicationContext(), "Punkte insgesamt", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_bolzer_created:
+                Toast.makeText(getApplicationContext(), "Anzahl Bolter erstellt", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_bolzer_tickets:
+                Toast.makeText(getApplicationContext(), "Anzahl an Bolzer teilgenommen", Toast.LENGTH_SHORT).show();
                 break;
 
         }

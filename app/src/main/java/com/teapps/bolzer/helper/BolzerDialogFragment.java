@@ -23,8 +23,6 @@ import com.google.zxing.WriterException;
 import com.squareup.picasso.Picasso;
 import com.teapps.bolzer.R;
 
-import java.util.Calendar;
-
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
 

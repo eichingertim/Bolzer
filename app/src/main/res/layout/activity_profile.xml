@@ -73,6 +73,50 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
+        <Button
+            android:id="@+id/btn_bolzer_tickets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_standard_design_white"
+            android:drawableLeft="@drawable/ic_action_ticket_green"
+            android:drawablePadding="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="0"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_standard_points"
+            app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+        <Button
+            android:id="@+id/btn_bolzer_created"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_standard_design_white"
+            android:drawableLeft="@drawable/ic_done_all_black_24dp"
+            android:drawablePadding="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="0"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_standard_points"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view6" />
+
     </android.support.constraint.ConstraintLayout>
 
     <ScrollView

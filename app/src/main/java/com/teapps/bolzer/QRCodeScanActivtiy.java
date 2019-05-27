@@ -57,7 +57,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
     private FirebaseVisionBarcodeDetectorOptions options;
 
     Camera mCamera = null;
-    ImageView imageView;
+    ImageView imageView, qrScanField;
     Button button;
     FrameLayout preview;
     ProgressDialog progressDialog;
@@ -70,6 +70,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             imageView = findViewById(R.id.img_result_img_view);
+            qrScanField = findViewById(R.id.img_qr_scan_field);
             Bitmap bmp = getResizedBitmap(BitmapFactory.decodeByteArray(data, 0, data.length)
                     , 1024);
             startAnalysis(bmp, camera);
@@ -128,6 +129,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                         imageView.setVisibility(View.VISIBLE);
                         button.setVisibility(View.INVISIBLE);
                         preview.setVisibility(View.INVISIBLE);
+                        qrScanField.setVisibility(View.INVISIBLE);
 
                         for (FirebaseVisionBarcode barcode: barcodes) {
                             Point[] corners = barcode.getCornerPoints();
@@ -157,6 +159,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Kein QR-Code gefunden"
                 , Toast.LENGTH_SHORT).show();
         imageView.setVisibility(View.INVISIBLE);
+        qrScanField.setVisibility(View.VISIBLE);
         preview.setVisibility(View.VISIBLE);
         button.setVisibility(View.VISIBLE);
         camera.startPreview();
@@ -164,6 +167,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
 
     private void noValidQRCode(Camera camera) {
         progressDialog.dismiss();
+        qrScanField.setVisibility(View.VISIBLE);
         imageView.setVisibility(View.INVISIBLE);
         preview.setVisibility(View.VISIBLE);
         button.setVisibility(View.VISIBLE);
@@ -190,7 +194,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                     try {
                         String creator_id = documentSnapshot.getString(KEY_CREATOR_NAME_AND_EMAIL).split("#")[2];
                         if (creator_id.equals(firebaseAuth.getCurrentUser().getUid())) {
-                            showConfirmationDialog(rawValue, camera);
+                            checkIfUserIsAlreadyConfirmed(rawValue, camera);
                         } else {
                             Toast.makeText(getApplicationContext(), "Du bist nicht berechtigt " +
                                     "diesen QR-Code zu scannen", Toast.LENGTH_SHORT).show();
@@ -209,6 +213,28 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Kein gültiger QR-Code", Toast.LENGTH_SHORT).show();
             noValidQRCode(camera);
         }
+    }
+
+    private void checkIfUserIsAlreadyConfirmed(final String rawValue, final Camera camera) {
+
+        String[] valuesFromRawValue = rawValue.split("#");
+
+        database.collection(COLLECTION_LOCATIONS).document(valuesFromRawValue[0])
+                .collection("member").document(valuesFromRawValue[1])
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if (documentSnapshot.getBoolean("confirmed")) {
+                    Toast.makeText(getApplicationContext(), "Teilnehmer bereits bestätigt"
+                            , Toast.LENGTH_LONG).show();
+                    noValidQRCode(camera);
+                } else {
+                    showConfirmationDialog(rawValue, camera);
+                }
+
+            }
+        });
     }
 
     private void showConfirmationDialog(String rawValue, final Camera camera) {
@@ -255,6 +281,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                 imageView.setVisibility(View.INVISIBLE);
                 preview.setVisibility(View.VISIBLE);
                 button.setVisibility(View.VISIBLE);
+                qrScanField.setVisibility(View.VISIBLE);
                 camera.startPreview();
             }
         });
