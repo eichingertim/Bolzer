@@ -24,10 +24,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.teapps.bolzer.R;
 
-import static com.teapps.bolzer.helper.Constants.COLLECTION_USERS;
-import static com.teapps.bolzer.helper.Constants.KEY_EMAIL;
-import static com.teapps.bolzer.helper.Constants.KEY_FORENAME;
-import static com.teapps.bolzer.helper.Constants.KEY_LASTNAME;
 
 public class ProfileAcivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -56,7 +52,7 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void getDataFromDatabaseAndFillObjects() {
-        database.collection(COLLECTION_USERS).document(user.getUid())
+        database.collection(getString(R.string.COLLECTION_USERS)).document(user.getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -68,9 +64,9 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void fillObjects(DocumentSnapshot ds) {
-        tvForeName.setText(ds.getString(KEY_FORENAME));
-        tvLastName.setText(ds.getString(KEY_LASTNAME));
-        tvEmail.setText(ds.getString(KEY_EMAIL));
+        tvForeName.setText(ds.getString(getString(R.string.KEY_FORENAME)));
+        tvLastName.setText(ds.getString(getString(R.string.KEY_LASTNAME)));
+        tvEmail.setText(ds.getString(getString(R.string.KEY_EMAIL)));
         tvPassword.setText("...............");
 
         btn_standard_points.setText(String.valueOf(ds.getLong("standard_points")));
@@ -125,7 +121,7 @@ public class ProfileAcivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(getApplicationContext(), "Punkte insgesamt", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btn_bolzer_created:
-                Toast.makeText(getApplicationContext(), "Anzahl Bolter erstellt", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Anzahl Bolzer erstellt", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btn_bolzer_tickets:
                 Toast.makeText(getApplicationContext(), "Anzahl an Bolzer teilgenommen", Toast.LENGTH_SHORT).show();

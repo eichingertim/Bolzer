@@ -31,8 +31,6 @@ import com.teapps.bolzer.helper.BolzerDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.teapps.bolzer.helper.Constants.*;
-
 public class MyBolzersFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private GridView gridView;
@@ -102,13 +100,14 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void getListData() {
-        database.collection(COLLECTION_USERS).document(auth.getCurrentUser().getUid()).get()
+        database.collection(getString(R.string.COLLECTION_USERS)).document(auth.getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String nameValue = auth.getCurrentUser().getEmail()+"#"+documentSnapshot
-                        .getString(KEY_FULLNAME)+"#"+auth.getCurrentUser().getUid();
-                        database.collection(COLLECTION_LOCATIONS).whereEqualTo(KEY_CREATOR_NAME_AND_EMAIL, nameValue)
+                        .getString(getString(R.string.KEY_FULLNAME))+"#"+auth.getCurrentUser().getUid();
+                        database.collection(getString(R.string.COLLECTION_LOCATIONS))
+                                .whereEqualTo(getString(R.string.KEY_CREATOR_INFO), nameValue)
                                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -123,9 +122,11 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
     private void getData(QuerySnapshot queryDocumentSnapshots) {
         list.clear();
         for (final DocumentSnapshot ds : queryDocumentSnapshots) {
-            String address = ds.getString(KEY_POSTALCODE) + " " + ds.getString(KEY_CITY);
-            BolzerCardItem newItem = new BolzerCardItem(ds.getString(KEY_DOWNLOAD_URL), ds.getString(KEY_TITLE)
-                    , address, ds.getString(KEY_ID));
+            String address = ds.getString(getString(R.string.KEY_POSTALCODE))
+                    + " " + ds.getString(getString(R.string.KEY_CITY));
+            BolzerCardItem newItem = new BolzerCardItem(ds.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                    , ds.getString(getString(R.string.KEY_TITLE))
+                    , address, ds.getString(getString(R.string.KEY_ID)));
             list.add(newItem);
         }
     }
@@ -134,7 +135,7 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Object o = gridView.getItemAtPosition(position);
         BolzerCardItem item = (BolzerCardItem) o;
-        database.collection(COLLECTION_LOCATIONS).document(item.getID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(item.getID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot ds = task.getResult();
@@ -147,18 +148,18 @@ public class MyBolzersFragment extends Fragment implements AdapterView.OnItemCli
         final String latiLongi = doc.getGeoPoint("location").getLatitude() + "#"
                 + doc.getGeoPoint("location").getLongitude();
 
-        database.collection(COLLECTION_USERS).document(auth.getCurrentUser().getUid())
+        database.collection(getString(R.string.COLLECTION_USERS)).document(auth.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot ds = task.getResult();
 
-                String userFullName = ds.getString(KEY_FULLNAME);
-                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(KEY_DOWNLOAD_URL)
-                        , doc.getString(KEY_TITLE), doc.getString(KEY_POSTALCODE)
-                        + " " + doc.getString(KEY_CITY), doc.getId(), doc.getString(KEY_CREATOR_NAME_AND_EMAIL)
-                        , doc.getString("date"), doc.getString("time"), doc.getString(KEY_MEMBERS)
-                        , doc.getString(KEY_AGE_GROUP), latiLongi);
+                String userFullName = ds.getString(getString(R.string.KEY_FULLNAME));
+                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                        , doc.getString(getString(R.string.KEY_TITLE)), doc.getString(getString(R.string.KEY_POSTALCODE))
+                        + " " + doc.getString(getString(R.string.KEY_CITY)), doc.getId(), doc.getString(getString(R.string.KEY_CREATOR_INFO))
+                        , doc.getString("date"), doc.getString("time"), doc.getString(getString(R.string.KEY_MEMBER_LIST))
+                        , doc.getString(getString(R.string.KEY_AGE_GROUP)), latiLongi);
 
                 BolzerDialogFragment fragment = BolzerDialogFragment.newInstance();
                 fragment.setArguments(bolzerCardItem, false, userFullName);

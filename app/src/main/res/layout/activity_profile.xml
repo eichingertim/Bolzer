@@ -5,212 +5,220 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <View
-            android:id="@+id/view4"
-            android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:background="@drawable/profile_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/view6"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:background="@drawable/profile_picture_circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.368" />
-
-        <ImageView
-            android:id="@+id/img_profile_picture"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.378"
-            app:srcCompat="@drawable/profile_pic_add" />
-
-        <Button
-            android:id="@+id/btn_standard_points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/button_standard_design_white"
-            android:drawableLeft="@drawable/ic_assessment_black_24dp"
-            android:drawablePadding="10dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="0"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/primaryColor"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view6" />
-
-        <Button
-            android:id="@+id/btn_bolzer_tickets"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/button_standard_design_white"
-            android:drawableLeft="@drawable/ic_action_ticket_green"
-            android:drawablePadding="10dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="0"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/primaryColor"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_standard_points"
-            app:layout_constraintTop_toBottomOf="@+id/view6" />
-
-        <Button
-            android:id="@+id/btn_bolzer_created"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/button_standard_design_white"
-            android:drawableLeft="@drawable/ic_done_all_black_24dp"
-            android:drawablePadding="10dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="0"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/primaryColor"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_standard_points"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view6" />
-
-    </android.support.constraint.ConstraintLayout>
-
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp">
+                android:layout_height="300dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/tv_forename"
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="0dp"
+                    android:layout_height="300dp"
+                    android:background="@drawable/profile_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view6"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:background="@drawable/profile_picture_circle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.368" />
+
+                <ImageView
+                    android:id="@+id/img_profile_picture"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.378"
+                    app:srcCompat="@drawable/profile_pic_add" />
+
+                <Button
+                    android:id="@+id/btn_standard_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/button_standard_design_white"
+                    android:drawableLeft="@drawable/ic_assessment_black_24dp"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+                <Button
+                    android:id="@+id/btn_bolzer_tickets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/button_standard_design_white"
+                    android:drawableLeft="@drawable/ic_action_ticket_green"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btn_standard_points"
+                    app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+                <Button
+                    android:id="@+id/btn_bolzer_created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/button_standard_design_white"
+                    android:drawableLeft="@drawable/ic_done_all_black_24dp"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_standard_points"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+                <android.support.design.widget.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Vorname"
-                    android:inputType="textPersonName"
-                    android:focusable="false"
-                    android:textColor="@color/secondaryTextColor"
-                    android:textSize="18dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tv_forename_Layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/tv_forename"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Vorname"
+                        android:inputType="textPersonName"
+                        android:focusable="false"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="18dp" />
+                </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/tv_lastname"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_forename_Layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nachname"
-                    android:focusable="false"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/secondaryTextColor"
-                    android:textSize="18dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tv_email_Layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/tv_lastname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nachname"
+                        android:focusable="false"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="18dp" />
+                </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/tv_email"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_email_Layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="E-Mail"
-                    android:inputType="textEmailAddress"
-                    android:focusable="false"
-                    android:textColor="@color/secondaryTextColor"
-                    android:textSize="18dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp">
 
-            <android.support.design.widget.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/tv_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="E-Mail"
+                        android:inputType="textEmailAddress"
+                        android:focusable="false"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="18dp" />
+                </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/tv_password"
+                <android.support.design.widget.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:focusable="false"
                     android:layout_height="wrap_content"
-                    android:hint="Passwort"
-                    android:inputType="textPassword"
-                    android:textColor="@color/secondaryTextColor"
-                    android:textSize="18dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp">
 
-        </LinearLayout>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/tv_password"
+                        android:layout_width="match_parent"
+                        android:focusable="false"
+                        android:layout_height="wrap_content"
+                        android:hint="Passwort"
+                        android:inputType="textPassword"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="18dp" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
 

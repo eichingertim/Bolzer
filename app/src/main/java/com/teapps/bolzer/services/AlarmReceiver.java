@@ -5,15 +5,16 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
+import android.util.Log;
 
 import com.teapps.bolzer.R;
 
-import static com.teapps.bolzer.helper.Constants.KEY_ID;
-import static com.teapps.bolzer.helper.Constants.KEY_TITLE;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -22,9 +23,16 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         createNotificationChannel(context);
-        String id_string = intent.getExtras().getString(KEY_ID);
-        String title_string = intent.getExtras().getString(KEY_TITLE);
-        showNotification(id_string, title_string, context);
+        String id_string = intent.getExtras().getString(context.getString(R.string.KEY_ID));
+        String title_string = intent.getExtras().getString(context.getString(R.string.KEY_TITLE));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean settings_notifications = sharedPreferences.getBoolean("notifications", true);
+        if (settings_notifications) {
+            showNotification(id_string, title_string, context);
+        } else {
+            Log.d("SETTINGS", "Keine Benachrichtigungen zugelassen");
+        }
+
     }
 
     private void showNotification(String id_string, String title_string, Context context) {

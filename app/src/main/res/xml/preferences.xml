@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/PreferenceTheme">
+
+    <PreferenceCategory
+        android:key="notifications_category"
+        android:title="Notifications"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:icon="@drawable/ic_notifications_none_grey_24dp"
+            android:defaultValue="true"
+            android:key="notifications"
+            android:title="Benachrichtigungen aktivieren" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="help_category"
+        android:title="Help"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:icon="@drawable/ic_feedback_grey_24dp"
+            android:key="feedback"
+            android:summary="Melde technische Probleme oder schlagen Sie neue Funktionen vor"
+            android:title="Feedback senden" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

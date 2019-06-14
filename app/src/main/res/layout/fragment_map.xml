@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:mapbox="http://schemas.android.com/apk/res-auto">
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/mapView"
@@ -12,4 +13,21 @@
             mapbox:mapbox_cameraTargetLng="10.458019"
             mapbox:mapbox_cameraZoom="5" />
 
-</RelativeLayout>
+    <include layout="@layout/map_bottom_sheet_layout"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_profile_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:background="@color/primaryColor"
+        android:backgroundTint="@color/primaryColor"
+        android:src="@drawable/ic_add_black_24dp"
+        app:layout_anchor="@+id/bottom_sheet"
+        app:layout_anchorGravity="top|right|end"
+        android:layout_gravity="top" />
+
+
+
+
+</android.support.design.widget.CoordinatorLayout>

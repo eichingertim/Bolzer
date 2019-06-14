@@ -46,11 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.teapps.bolzer.helper.Constants.COLLECTION_LOCATIONS;
-import static com.teapps.bolzer.helper.Constants.COLLECTION_USERS;
-import static com.teapps.bolzer.helper.Constants.KEY_CREATOR_NAME_AND_EMAIL;
-import static com.teapps.bolzer.helper.Constants.KEY_MEMBERS_ID;
-
 public class QRCodeScanActivtiy extends AppCompatActivity {
 
     private CameraPreview mPreview;
@@ -188,11 +183,11 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
     private void checkValidationOfQRCode(final String rawValue, final Camera camera) {
         try {
             String bolzer_id = rawValue.split("#")[0];
-            database.collection(COLLECTION_LOCATIONS).document(bolzer_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(bolzer_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     try {
-                        String creator_id = documentSnapshot.getString(KEY_CREATOR_NAME_AND_EMAIL).split("#")[2];
+                        String creator_id = documentSnapshot.getString(getString(R.string.KEY_CREATOR_INFO)).split("#")[2];
                         if (creator_id.equals(firebaseAuth.getCurrentUser().getUid())) {
                             checkIfUserIsAlreadyConfirmed(rawValue, camera);
                         } else {
@@ -219,7 +214,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
 
         String[] valuesFromRawValue = rawValue.split("#");
 
-        database.collection(COLLECTION_LOCATIONS).document(valuesFromRawValue[0])
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(valuesFromRawValue[0])
                 .collection("member").document(valuesFromRawValue[1])
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -249,7 +244,7 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                 Map<String, Object> updateConfirmation = new HashMap<>();
                 updateConfirmation.put("confirmed", true);
 
-                database.collection(COLLECTION_LOCATIONS).document(values[0])
+                database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(values[0])
                         .collection("member").document(values[1]).update(updateConfirmation)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -263,9 +258,9 @@ public class QRCodeScanActivtiy extends AppCompatActivity {
                                 mapMember.put("standard_points", FieldValue.increment(5));
                                 mapMember.put("bolzers_completed_as_member", FieldValue.increment(1));
 
-                                database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+                                database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseAuth.getCurrentUser().getUid())
                                         .update(mapCreator);
-                                database.collection(COLLECTION_USERS).document(values[1])
+                                database.collection(getString(R.string.COLLECTION_USERS)).document(values[1])
                                         .update(mapMember);
                                 dialog.dismiss();
                                 Toast.makeText(getApplicationContext(), "Bestätigt", Toast.LENGTH_SHORT).show();

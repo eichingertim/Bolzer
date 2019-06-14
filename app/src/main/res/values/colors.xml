@@ -3,15 +3,16 @@
     <color name="primaryColor">#34CE49</color>
     <color name="primaryLightColor">#73ff79</color>
     <color name="primaryDarkColor">#009C14</color>
+    <color name="primaryTextColor">#ffffff</color>
 
-    <color name="secondaryColor">#34ce49</color>
+    <color name="secondaryColor">#34CE49</color>
     <color name="secondaryLightColor">#ffffff</color>
-    <color name="secondaryDarkColor">#cccccc</color>
+    <color name="secondaryDarkColor">#CCCCCC</color>
+    <color name="secondaryTextColor">#000000</color>
 
     <color name="windowBackground">#FFFFFF</color>
 
-    <color name="primaryTextColor">#FFFFFF</color>
     <color name="darkTextColor">#888888</color>
-    <color name="secondaryTextColor">#000000</color>
+
 
 </resources>

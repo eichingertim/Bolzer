@@ -12,11 +12,7 @@
     <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
     <string name="fill_all_fields">Du musst alle Felder ausfüllen.</string>
     <string name="plz_coordinates_not_match">Postleitzahl und Koordinaten stimmen nicht überein</string>
-    <string name="no_data_recieved">Keine Daten empfangen</string>
-
-    <!--String for Map-Fragment-->
-    <string name="unable_get_zipcode">Postleitzahl kann nicht abgerufen werden</string>
-
+    <string name="no_data_received">Keine Daten empfangen</string>
     <string-array name="age_numbers">
         <item>4</item>
         <item>5</item>
@@ -57,12 +53,38 @@
         <item>40</item>
     </string-array>
 
-    <string name="teststring">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    <!--String for Map-Fragment-->
+    <string name="unable_get_zipcode">Postleitzahl kann nicht abgerufen werden</string>
+    <string name="search_hint_map">PLZ, Ort, Titel....</string>
+    <string name="mapbox_mapstyle_url">mapbox://styles/timeichinger/cjw0cu8yv22nl1cv38yj4hb41</string>
+    <string name="message_loading">Loading....</string>
+    <string name="successfully_accepted">Erfolgreich zugesagt.</string>
 
-Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+    <!--Constants for Firebase Database Keys-->
+    <string name="COLLECTION_LOCATIONS">locations</string>
+    <string name="COLLECTION_USERS">users</string>
 
-Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+    <string name="KEY_TITLE">title</string>
+    <string name="KEY_AGE_GROUP">agegroup</string>
+    <string name="KEY_LOCATION">location</string>
+    <string name="KEY_COUNTRY">country</string>
+    <string name="KEY_POSTALCODE">postalcode</string>
+    <string name="KEY_CITY">city</string>
+    <string name="KEY_MEMBER_LIST">members</string>
+    <string name="KEY_MEMBER_ID_LIST">members_id</string>
+    <string name="KEY_CREATOR_INFO">name</string>
+    <string name="KEY_ID">id</string>
+    <string name="KEY_DOWNLOAD_URL">img_download_url</string>
+    <string name="KEY_TIME">time</string>
+    <string name="KEY_DATE">date</string>
+    <string name="KEY_CONFIRMED">confirmed</string>
+    <string name="KEY_MEMBER">member</string>
 
-Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer</string>
+    <string name="KEY_FORENAME">forename</string>
+    <string name="KEY_LASTNAME">lastname</string>
+    <string name="KEY_EMAIL">email</string>
+    <string name="KEY_FULLNAME">fullname</string>
+    <string name="KEY_USER_ID">id</string>
+
 
 </resources>

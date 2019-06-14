@@ -10,7 +10,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -31,9 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.teapps.bolzer.fragments.MapFragment;
 import com.teapps.bolzer.fragments.MyBolzersFragment;
 import com.teapps.bolzer.fragments.BolzerTicketsFragment;
-import com.teapps.bolzer.fragments.StatisticFragment;
 import com.teapps.bolzer.logreg.LogRegActivity;
 import com.teapps.bolzer.nav_activities.ProfileAcivity;
+import com.teapps.bolzer.nav_activities.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -50,9 +49,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fm = getSupportFragmentManager();
     private Fragment active = mapFragment;
 
-    private FloatingActionButton fab;
-
     private BottomNavigationView bnv;
+
+    private MapIconCallback mapIconCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBar = getSupportActionBar();
 
         showPermissionDialog();
-        initializeFab();
         initFragments();
         initializeFirebase();
         initializeNavDrawer();
@@ -114,6 +112,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(MainActivity.this, LogRegActivity.class));
                 return true;
 
+            case R.id.nav_einstellungen:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+
             case R.id.nav_ueber:
                 openAboutDialog();
                 return true;
@@ -122,21 +124,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
                 actionBar.setTitle("Bolzer");
-                fab.setVisibility(View.VISIBLE);
+                mapIconCallback.mapIconClick();
                 return true;
 
             case R.id.action_my_bolzer:
                 fm.beginTransaction().hide(active).show(myBolzersFragment).commit();
                 active = myBolzersFragment;
                 actionBar.setTitle("Meine Bolzer");
-                fab.setVisibility(View.VISIBLE);
                 return true;
 
             case R.id.action_other_bolzer:
                 fm.beginTransaction().hide(active).show(otherBolzersFragment).commit();
                 active = otherBolzersFragment;
                 actionBar.setTitle("Bolzer Tickets");
-                fab.setVisibility(View.INVISIBLE);
                 return true;
         }
         return false;
@@ -155,17 +155,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
     }
 
-    private void initializeFab() {
-        fab = findViewById(R.id.btn_profile_edit);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, NewBolzerActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
     private void showPermissionDialog() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
@@ -179,5 +168,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 , 1240);
         } else {
         }
+    }
+
+    public void setMapIconCallback(MapIconCallback mapIconCallback) {
+        this.mapIconCallback = mapIconCallback;
+    }
+
+    public interface MapIconCallback {
+        public void mapIconClick();
     }
 }

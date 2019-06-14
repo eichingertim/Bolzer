@@ -3,14 +3,14 @@ package com.teapps.bolzer.fragments;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -21,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,13 +49,15 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.teapps.bolzer.MainActivity;
+import com.teapps.bolzer.NewBolzerActivity;
 import com.teapps.bolzer.R;
 import com.teapps.bolzer.helper.BolzerCardItem;
 import com.teapps.bolzer.helper.BolzerDialogFragment;
+import com.teapps.bolzer.helper.BolzerListItemAdapter;
 import com.teapps.bolzer.services.AlarmReceiver;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,35 +69,30 @@ import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.ALARM_SERVICE;
-import static com.teapps.bolzer.helper.Constants.COLLECTION_LOCATIONS;
-import static com.teapps.bolzer.helper.Constants.COLLECTION_USERS;
-import static com.teapps.bolzer.helper.Constants.FIELD_LOCATION;
-import static com.teapps.bolzer.helper.Constants.KEY_AGE_GROUP;
-import static com.teapps.bolzer.helper.Constants.KEY_CITY;
-import static com.teapps.bolzer.helper.Constants.KEY_DATE;
-import static com.teapps.bolzer.helper.Constants.KEY_DOWNLOAD_URL;
-import static com.teapps.bolzer.helper.Constants.KEY_FULLNAME;
-import static com.teapps.bolzer.helper.Constants.KEY_ID;
-import static com.teapps.bolzer.helper.Constants.KEY_LOCATION;
-import static com.teapps.bolzer.helper.Constants.KEY_MEMBERS;
-import static com.teapps.bolzer.helper.Constants.KEY_CREATOR_NAME_AND_EMAIL;
-import static com.teapps.bolzer.helper.Constants.KEY_MEMBERS_ID;
-import static com.teapps.bolzer.helper.Constants.KEY_POSTALCODE;
-import static com.teapps.bolzer.helper.Constants.KEY_TIME;
-import static com.teapps.bolzer.helper.Constants.KEY_TITLE;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
-        BolzerDialogFragment.CallBack, MapboxMap.OnInfoWindowClickListener {
+        BolzerDialogFragment.CallBack, MapboxMap.OnInfoWindowClickListener,
+        MainActivity.MapIconCallback, AdapterView.OnItemClickListener {
 
     private MapView mapView;
     private MapboxMap map;
+
     private FirebaseFirestore database;
     private FirebaseAuth firebaseAuth;
     private Bundle savedInstanceState;
 
+    private ListView listView;
+    private BolzerListItemAdapter adapter;
+    private List<BolzerCardItem> bolzerCardItems = new ArrayList<>();
+
+    private FloatingActionButton fab;
+
+    private BottomSheetBehavior sheetBehavior;
+    private View bottomSheet;
+
     private Calendar alarmCalender = Calendar.getInstance();
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -101,9 +100,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
         setHasOptionsMenu(true);
-        Mapbox.getInstance(getActivity(), getString(R.string.api_key));
-        initializeFirebase();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setMapIconCallback(this);
+        Mapbox.getInstance(getActivity()
+                , getString(R.string.api_key));
+        initFirebase();
 
+    }
+
+    /*
+    Initializing components of "firebase"
+     */
+    private void initFirebase() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseFirestore.getInstance();
     }
 
     @Nullable
@@ -118,51 +128,99 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_map_fragment, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                onSearching(query);
-                return true;
-            }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        initializeFab(view);
+        initBottomSheet(view);
+    }
+
+    /*
+    Initializing FloatingActionButton, with the hands off on click to the "NewBolzer"-Activity
+     */
+    private void initializeFab(View view) {
+        fab = view.findViewById(R.id.btn_profile_edit);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), NewBolzerActivity.class);
+                startActivity(intent);
             }
         });
     }
 
-    private void initializeFirebase() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseFirestore.getInstance();
+    /*
+    1. Initializing the bottom-sheet, its components and behavior.
+    2. The adapter for the ListView in the bottom-sheet gets a List of "BolzerItems".
+     */
+    private void initBottomSheet(View view) {
+        bottomSheet = view.findViewById(R.id.bottom_sheet);
+        adapter = new BolzerListItemAdapter(getActivity(), bolzerCardItems);
+        listView = view.findViewById(R.id.list_view_bottom_sheet);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+        sheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        sheetBehavior.setPeekHeight(200);
+        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int i) {
+                if (i == BottomSheetBehavior.STATE_COLLAPSED) {
+                    sheetBehavior.setPeekHeight(200);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
+            }
+        });
     }
 
+    /*
+    Hands off to the BolzerDialogFragment when a BolzerListItem is clicked in the bottom-sheet List-
+    View.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        BolzerCardItem bolzerCardItem = (BolzerCardItem) adapter.getItem(position);
+        database.collection(getString(R.string.COLLECTION_LOCATIONS))
+                .document(bolzerCardItem.getID()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                getDataAndSendToDialog(doc);
+            }
+        });
+    }
+
+    /*
+    1. Sets the style of the map from a created URL in MapBox-Studio
+    2. Sets markers onto the map where the cloud-saved bolzers are located
+     */
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         map = mapboxMap;
-        map.setStyle(new Style.Builder().fromUrl("mapbox://styles/timeichinger/cjw0cu8yv22nl1cv38yj4hb41")
+        map.setStyle(new Style.Builder().fromUrl(getString(R.string.mapbox_mapstyle_url))
                 , new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationPlugin(style);
-                database.collection(COLLECTION_LOCATIONS)
+                database.collection(getString(R.string.COLLECTION_LOCATIONS))
                         .addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots
                                     , @javax.annotation.Nullable FirebaseFirestoreException e) {
                                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                                    if (doc.get(KEY_CREATOR_NAME_AND_EMAIL) != null) {
+                                    if (doc.get(getString(R.string.KEY_CREATOR_INFO)) != null) {
 
                                         LatLng location = new LatLng(
-                                                doc.getGeoPoint(FIELD_LOCATION).getLatitude(),
-                                                doc.getGeoPoint(FIELD_LOCATION).getLongitude());
+                                                doc.getGeoPoint(getString(R.string.KEY_LOCATION)).getLatitude(),
+                                                doc.getGeoPoint(getString(R.string.KEY_LOCATION)).getLongitude());
 
                                         map.addMarker(new MarkerOptions().position(location)
-                                                .title(doc.getString(KEY_TITLE)));
+                                                .title(doc.getString(getString(R.string.KEY_TITLE))));
                                     }
                                 }
                             }
@@ -172,17 +230,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         map.setOnInfoWindowClickListener(this);
     }
 
+    @Override
+    public boolean onInfoWindowClick(@NonNull Marker marker) {
+        return MarkerPopUp(marker);
+    }
+
+    /*
+    Handles the event when the user clicks on a MarkerPopUp
+     - It opens a progressDialog and executes the "getDataAndSendToDialog"-Method
+     */
     private boolean MarkerPopUp(final Marker marker) {
         final GeoPoint geoPoint = new GeoPoint(marker.getPosition().getLatitude()
                 , marker.getPosition().getLongitude());
-        database.collection(COLLECTION_LOCATIONS).whereEqualTo(KEY_LOCATION
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).whereEqualTo(getString(R.string.KEY_LOCATION)
                 , geoPoint).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (DocumentSnapshot doc : task.getResult()) {
-                    if (doc.getGeoPoint(KEY_LOCATION).equals(geoPoint)) {
+                    if (doc.getGeoPoint(getString(R.string.KEY_LOCATION)).equals(geoPoint)) {
                         progressDialog = new ProgressDialog(getActivity());
-                        progressDialog.setMessage("Loading....");
+                        progressDialog.setMessage(getString(R.string.message_loading));
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progressDialog.show();
                         getDataAndSendToDialog(doc, marker);
@@ -195,20 +262,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void getDataAndSendToDialog(final DocumentSnapshot doc, final Marker marker) {
-        database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+        database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseAuth.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot ds = task.getResult();
                 String latiLongi = marker.getPosition().getLatitude() + "#"
                         + marker.getPosition().getLongitude();
-                String userFullName = ds.getString(KEY_FULLNAME);
+                String userFullName = ds.getString(getString(R.string.KEY_FULLNAME));
 
-                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(KEY_DOWNLOAD_URL)
-                        , doc.getString(KEY_TITLE), doc.getString(KEY_POSTALCODE)
-                        + " " + doc.getString(KEY_CITY), doc.getId(), doc.getString(KEY_CREATOR_NAME_AND_EMAIL)
-                        , doc.getString("date"), doc.getString("time"), doc.getString(KEY_MEMBERS)
-                        , doc.getString(KEY_AGE_GROUP), latiLongi);
+                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                        , doc.getString(getString(R.string.KEY_TITLE)), doc.getString(getString(R.string.KEY_POSTALCODE))
+                        + " " + doc.getString(getString(R.string.KEY_CITY)), doc.getId(), doc.getString(getString(R.string.KEY_CREATOR_INFO))
+                        , doc.getString(getString(R.string.KEY_DATE)), doc.getString(getString(R.string.KEY_TIME))
+                        , doc.getString(getString(R.string.KEY_MEMBER_LIST)), doc.getString(getString(R.string.KEY_AGE_GROUP)), latiLongi);
 
                 BolzerDialogFragment fragment = BolzerDialogFragment.newInstance();
                 fragment.setArguments(bolzerCardItem, false, userFullName);
@@ -219,12 +286,87 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
     }
 
+    private void getDataAndSendToDialog(final DocumentSnapshot doc) {
+        database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseAuth.getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot ds = task.getResult();
+                GeoPoint geoPoint =  doc.getGeoPoint(getString(R.string.KEY_LOCATION));
+                String latiLongi = geoPoint.getLatitude() + "#"
+                        + geoPoint.getLongitude();
+                String userFullName = ds.getString(getString(R.string.KEY_FULLNAME));
+
+                BolzerCardItem bolzerCardItem = new BolzerCardItem(doc.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                        , doc.getString(getString(R.string.KEY_TITLE)), doc.getString(getString(R.string.KEY_POSTALCODE))
+                        + " " + doc.getString(getString(R.string.KEY_CITY)), doc.getId(), doc.getString(getString(R.string.KEY_CREATOR_INFO))
+                        , doc.getString(doc.getString(getString(R.string.KEY_DATE)))
+                        , doc.getString(getString(R.string.KEY_TIME)), doc.getString(getString(R.string.KEY_MEMBER_LIST))
+                        , doc.getString(getString(R.string.KEY_AGE_GROUP)), latiLongi);
+
+                BolzerDialogFragment fragment = BolzerDialogFragment.newInstance();
+                fragment.setArguments(bolzerCardItem, false, userFullName);
+                fragment.setCallBack(MapFragment.this);
+                fragment.show(getActivity().getSupportFragmentManager(), "tag");
+            }
+        });
+    }
+
+    private void getDataFillBottomSheetListView(boolean isTitleQuery) {
+        if (isTitleQuery) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            adapter.notifyDataSetChanged();
+        } else {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+            try {
+                Geocoder geocoder = new Geocoder(getActivity());
+                LatLng latLng = map.getCameraPosition().target;
+                List<Address> addressList = geocoder.getFromLocation(latLng.getLatitude()
+                        , latLng.getLongitude(), 1);
+                if (addressList != null && !addressList.isEmpty()) {
+                    Address address = addressList.get(0);
+                    String postalcode = address.getPostalCode();
+
+                    getDataFromDatabase(postalcode);
+                    adapter.notifyDataSetChanged();
+
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.unable_get_zipcode)
+                            , Toast.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void getDataFromDatabase(String postalcode) {
+        bolzerCardItems.clear();
+        database.collection(getString(R.string.COLLECTION_LOCATIONS))
+                .whereEqualTo(getString(R.string.KEY_POSTALCODE), postalcode).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            bolzerCardItems.add(new BolzerCardItem(doc.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                                    , doc.getString(getString(R.string.KEY_TITLE))
+                                    , doc.getString(getString(R.string.KEY_CITY))
+                                    , doc.getString(getString(R.string.KEY_ID))));
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onActionClicked(final String id) {
         Map<String, Object> map = new HashMap<>();
-        map.put("confirmed", false);
-        database.collection(COLLECTION_LOCATIONS).document(id)
-                .collection("member").document(firebaseAuth.getCurrentUser().getUid())
+        map.put(getString(R.string.KEY_CONFIRMED), false);
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(id)
+                .collection(getString(R.string.KEY_MEMBER)).document(firebaseAuth.getCurrentUser().getUid())
                 .set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -234,21 +376,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void updateMember(final String id) {
-        database.collection(COLLECTION_LOCATIONS).document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot ds = task.getResult();
-                String[] members = ds.getString(KEY_MEMBERS).split(",");
-                String[] members_id = ds.getString(KEY_MEMBERS_ID).split(",");
-                final String dateString = ds.getString(KEY_DATE) + ds.getString(KEY_TIME);
-                final String title = ds.getString(KEY_TITLE);
+                String[] members = ds.getString(getString(R.string.KEY_MEMBER_LIST)).split(",");
+                String[] members_id = ds.getString(getString(R.string.KEY_MEMBER_ID_LIST)).split(",");
+                final String dateString = ds.getString(getString(R.string.KEY_DATE)) + ds.getString(getString(R.string.KEY_TIME));
+                final String title = ds.getString(getString(R.string.KEY_TITLE));
                 final ArrayList<String> memberList = new ArrayList<>(Arrays.asList(members));
                 final ArrayList<String> memberIDList = new ArrayList<>(Arrays.asList(members_id));
-                database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+                database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseAuth.getCurrentUser().getUid())
                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        getAndUpdateMemberField(task, memberList, memberIDList, id, dateString, title);
+                        getAndUpdateMemberField(task, memberList, memberIDList, id, dateString
+                                , title);
                     }
                 });
 
@@ -257,9 +400,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void getAndUpdateMemberField(Task<DocumentSnapshot> task, ArrayList<String> memberList
-            , ArrayList<String> memberIDList, final String id, final String dateString, final String title) {
+            , ArrayList<String> memberIDList, final String id, final String dateString
+            , final String title) {
         DocumentSnapshot docS = task.getResult();
-        memberList.add(docS.getString(KEY_FULLNAME));
+        memberList.add(docS.getString(getString(R.string.KEY_FULLNAME)));
         memberIDList.add(firebaseAuth.getCurrentUser().getUid());
 
         StringBuilder sb = new StringBuilder();
@@ -274,15 +418,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         String firebaseMembersID = sb1.deleteCharAt(sb1.length() - 1).toString();
 
         Map<String, Object> update = new HashMap<>();
-        update.put(KEY_MEMBERS, firebaseMembers);
-        update.put(KEY_MEMBERS_ID, firebaseMembersID);
+        update.put(getString(R.string.KEY_MEMBER_LIST), firebaseMembers);
+        update.put(getString(R.string.KEY_MEMBER_ID_LIST), firebaseMembersID);
 
-        database.collection(COLLECTION_LOCATIONS).document(id)
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(id)
                 .update(update).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 setAlarm(dateString, id, title);
-                Toast.makeText(getActivity(), "Erfolgreich zugesagt.", Toast.LENGTH_LONG)
+                Toast.makeText(getActivity(), getString(R.string.successfully_accepted)
+                        , Toast.LENGTH_LONG)
                         .show();
 
             }
@@ -300,13 +445,126 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         alarmCalender.setTime(d);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        alarmIntent.putExtra(KEY_ID, id);
-        alarmIntent.putExtra(KEY_TITLE, title);
+        alarmIntent.putExtra(getString(R.string.KEY_ID), id);
+        alarmIntent.putExtra(getString(R.string.KEY_TITLE), title);
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(getActivity()
                 , 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP
                 , alarmCalender.getTimeInMillis()-30*60*1000, alarmPendingIntent);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_map_fragment, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint(getString(R.string.search_hint_map));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                onSearching(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    private void onSearching(String query) {
+        Geocoder geocoder_main = new Geocoder(getActivity());
+        try {
+            List<Address> addressList = geocoder_main.getFromLocationName(query, 10);
+            if (addressList.size() > 0) {
+                searchForCityAndPostalcode(query);
+            } else {
+                searchForTitle(query);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            searchForTitle(query);
+        }
+    }
+
+    private void searchForTitle(final String query) {
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).whereEqualTo(getString(R.string.KEY_TITLE), query)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (DocumentSnapshot doc : task.getResult()) {
+                    bolzerCardItems.clear();
+                    bolzerCardItems.add(new BolzerCardItem(doc.getString(getString(R.string.KEY_DOWNLOAD_URL))
+                            , doc.getString(getString(R.string.KEY_TITLE))
+                            , doc.getString(getString(R.string.KEY_CITY))
+                            , doc.getString(getString(R.string.KEY_ID))));
+                }
+                getDataFillBottomSheetListView(true);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    private void searchForCityAndPostalcode(final String query) {
+        database.collection(getString(R.string.COLLECTION_LOCATIONS)).whereEqualTo(getString(R.string.KEY_POSTALCODE), query)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (DocumentSnapshot doc : task.getResult()) {
+                    Toast.makeText(getActivity(), doc.getString(getString(R.string.KEY_TITLE))
+                            , Toast.LENGTH_SHORT).show();
+                }
+                Geocoder geocoder = new Geocoder(getActivity());
+                try {
+                    List<Address> addressList = geocoder.getFromLocationName(query, 1);
+                    if (addressList != null && !addressList.isEmpty()) {
+                        Address address = addressList.get(0);
+                        map.animateCamera(CameraUpdateFactory
+                                .newLatLngZoom(new LatLng(address.getLatitude()
+                                        , address.getLongitude()), 12));
+                        getDataFillBottomSheetListView(false);
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.unable_get_zipcode)
+                                , Toast.LENGTH_LONG).show();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    @SuppressWarnings( {"MissingPermission"})
+    private void enableLocationPlugin(@NonNull Style loadedMapStyle) {
+        if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
+
+            LocationComponent locationComponent = map.getLocationComponent();
+            locationComponent.activateLocationComponent(getActivity(), loadedMapStyle);
+            locationComponent.setLocationComponentEnabled(true);
+
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            locationComponent.setRenderMode(RenderMode.NORMAL);
+
+        }
+    }
+
+    @Override
+    public void mapIconClick() {
+        getDataFillBottomSheetListView(false);
     }
 
     @Override
@@ -349,58 +607,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
-    }
-
-    private void onSearching(final String query) {
-        database.collection(COLLECTION_LOCATIONS).whereEqualTo(KEY_POSTALCODE, query)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (DocumentSnapshot doc : task.getResult()) {
-                    Toast.makeText(getActivity(), doc.getString(KEY_TITLE)
-                            , Toast.LENGTH_SHORT).show();
-                }
-                Geocoder geocoder = new Geocoder(getActivity());
-                try {
-                    List<Address> addressList = geocoder.getFromLocationName(query, 1);
-                    if (addressList != null && !addressList.isEmpty()) {
-                        Address address = addressList.get(0);
-                        map.animateCamera(CameraUpdateFactory
-                                .newLatLngZoom(new LatLng(address.getLatitude()
-                                        , address.getLongitude()), 12));
-                    } else {
-                        Toast.makeText(getActivity(), getString(R.string.unable_get_zipcode)
-                                , Toast.LENGTH_LONG).show();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationPlugin(@NonNull Style loadedMapStyle) {
-        if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
-
-            LocationComponent locationComponent = map.getLocationComponent();
-            locationComponent.activateLocationComponent(getActivity(), loadedMapStyle);
-            locationComponent.setLocationComponentEnabled(true);
-
-            locationComponent.setCameraMode(CameraMode.TRACKING);
-            locationComponent.setRenderMode(RenderMode.NORMAL);
-
-        }
-    }
-
-    @Override
-    public boolean onInfoWindowClick(@NonNull Marker marker) {
-        return MarkerPopUp(marker);
     }
 }

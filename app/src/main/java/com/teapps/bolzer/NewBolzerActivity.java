@@ -59,8 +59,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-import static com.teapps.bolzer.helper.Constants.*;
-
 public class NewBolzerActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 120;
@@ -120,18 +118,18 @@ public class NewBolzerActivity extends AppCompatActivity {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TITLE, title.getText().toString());
-        map.put(KEY_COUNTRY, country.getText().toString());
-        map.put(KEY_CITY, city.getText().toString());
-        map.put(KEY_POSTALCODE, postalcode.getText().toString());
-        map.put(KEY_LOCATION, new GeoPoint(lati, longi));
-        map.put(KEY_CREATOR_NAME_AND_EMAIL, bolzerCreatorNameAndEmail);
-        map.put(KEY_AGE_GROUP, strAgeGroup);
-        map.put(KEY_ID, randomId);
-        map.put(KEY_MEMBERS, name.getText().toString());
-        map.put(KEY_MEMBERS_ID, firebaseUser.getUid());
-        map.put(KEY_TIME, btnTime.getText().toString());
-        map.put(KEY_DATE, btnDate.getText().toString());
+        map.put(getString(R.string.KEY_TITLE), title.getText().toString());
+        map.put(getString(R.string.KEY_COUNTRY), country.getText().toString());
+        map.put(getString(R.string.KEY_CITY), city.getText().toString());
+        map.put(getString(R.string.KEY_POSTALCODE), postalcode.getText().toString());
+        map.put(getString(R.string.KEY_LOCATION), new GeoPoint(lati, longi));
+        map.put(getString(R.string.KEY_CREATOR_INFO), bolzerCreatorNameAndEmail);
+        map.put(getString(R.string.KEY_AGE_GROUP), strAgeGroup);
+        map.put(getString(R.string.KEY_ID), randomId);
+        map.put(getString(R.string.KEY_MEMBER_LIST), name.getText().toString());
+        map.put(getString(R.string.KEY_MEMBER_ID_LIST), firebaseUser.getUid());
+        map.put(getString(R.string.KEY_TIME), btnTime.getText().toString());
+        map.put(getString(R.string.KEY_DATE), btnDate.getText().toString());
 
         checkingDataAndCreateSnapshot(bolzerLocationStr, lati, longi, map);
 
@@ -145,8 +143,8 @@ public class NewBolzerActivity extends AppCompatActivity {
     private void checkingDataAndCreateSnapshot(String bolzerLocationStr
             ,double lati, double longi, final Map<String, Object> map) {
 
-        if (isValidInput(map.get(KEY_TITLE).toString(), map.get(KEY_COUNTRY).toString()
-                , map.get(KEY_CITY).toString(), map.get(KEY_POSTALCODE).toString(), bolzerLocationStr)) {
+        if (isValidInput(map.get(getString(R.string.KEY_TITLE)).toString(), map.get(getString(R.string.KEY_COUNTRY)).toString()
+                , map.get(getString(R.string.KEY_CITY)).toString(), map.get(getString(R.string.KEY_POSTALCODE)).toString(), bolzerLocationStr)) {
 
             progressDialog = new ProgressDialog(NewBolzerActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -164,7 +162,7 @@ public class NewBolzerActivity extends AppCompatActivity {
             mapSnapshotter.start(new MapSnapshotter.SnapshotReadyCallback() {
                 @Override
                 public void onSnapshotReady(MapSnapshot snapshot) {
-                    createMapBitmapAndUpload(snapshot, map.get(KEY_ID).toString(), map);
+                    createMapBitmapAndUpload(snapshot, map.get(getString(R.string.KEY_ID)).toString(), map);
                 }
             });
         }
@@ -205,16 +203,16 @@ public class NewBolzerActivity extends AppCompatActivity {
 
     private void uploadToFirebase(Task<Uri> task, final Map<String, Object> map, final String randomId) {
         Uri downloadUri = task.getResult();
-        map.put(KEY_DOWNLOAD_URL, downloadUri.toString());
+        map.put(getString(R.string.KEY_DOWNLOAD_URL), downloadUri.toString());
         final Map<String, Object> mapMember = new HashMap<>();
-        mapMember.put("name", map.get(KEY_CREATOR_NAME_AND_EMAIL));
+        mapMember.put("name", map.get(getString(R.string.KEY_CREATOR_INFO)));
         mapMember.put("confirmed", true);
-        database.collection(COLLECTION_LOCATIONS)
+        database.collection(getString(R.string.COLLECTION_LOCATIONS))
                 .document(randomId).set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        database.collection(COLLECTION_LOCATIONS).document(randomId)
+                        database.collection(getString(R.string.COLLECTION_LOCATIONS)).document(randomId)
                                 .collection("member").document(firebaseUser.getUid())
                                 .set(mapMember).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -223,7 +221,7 @@ public class NewBolzerActivity extends AppCompatActivity {
                                         , getString(R.string.new_bolzer_published)
                                         , Toast.LENGTH_SHORT).show();
                                 setAlarm(map);
-                                database.collection(COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid())
+                                database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseAuth.getCurrentUser().getUid())
                                         .update("bolzers_created", FieldValue.increment(1));
                                 progressDialog.dismiss();
                                 onBackPressed();
@@ -237,8 +235,8 @@ public class NewBolzerActivity extends AppCompatActivity {
     private void setAlarm(Map<String, Object> map) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        alarmIntent.putExtra(KEY_ID, map.get(KEY_ID).toString());
-        alarmIntent.putExtra(KEY_TITLE, map.get(KEY_TITLE).toString());
+        alarmIntent.putExtra(getString(R.string.KEY_ID), map.get(getString(R.string.KEY_ID)).toString());
+        alarmIntent.putExtra(getString(R.string.KEY_TITLE), map.get(getString(R.string.KEY_TITLE)).toString());
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(getApplicationContext()
                 , 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP
@@ -286,12 +284,12 @@ public class NewBolzerActivity extends AppCompatActivity {
     }
 
     private void fillKnownObjects() {
-        database.collection(COLLECTION_USERS).document(firebaseUser.getUid()).get()
+        database.collection(getString(R.string.COLLECTION_USERS)).document(firebaseUser.getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot ds = task.getResult();
-                        String nameStr = ds.getString(KEY_FULLNAME);
+                        String nameStr = ds.getString(getString(R.string.KEY_FULLNAME));
                         name.setText(nameStr);
                     }
                 });
@@ -471,7 +469,7 @@ public class NewBolzerActivity extends AppCompatActivity {
                 location.setText(strLocation);
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), getString(R.string.no_data_recieved)
+                Toast.makeText(getApplicationContext(), getString(R.string.no_data_received)
                         , Toast.LENGTH_SHORT).show();
             }
         }
